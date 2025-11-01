@@ -8,7 +8,7 @@ const statRouter = require('./routes/admin_router');
 
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 //middlewares
 app.use(cors({
@@ -23,14 +23,6 @@ app.use('/api/user', userRouter);
 app.use('/api/stores', storeRouter);
 app.use('/api/ratings',ratingRouter);
 app.use('/api/admin',statRouter);
-
-
-
-app.get('/',(req, res) => {
-    const data = db.query('SELECT * FROM user');
-    res.send('Hello world!');
-})
-
 
 app.listen(PORT,()=>{
     console.log(`Server is running on http://localhost:${PORT}` 

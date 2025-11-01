@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const db = require('../config/db');
+const bcrypt = require("bcrypt");
 const { User } = require('../models/user');
 const { authenticationMiddleware, generateToken } = require('../middleware/jwt')
 
@@ -25,12 +27,12 @@ const userLogin = async (req, res) => {
                     id: existingUser.id,
                     name: existingUser.name,
                     email: existingUser.email,
-                    role:existingUser.role
+                    role: existingUser.role
                 };
 
                 const token = generateToken(payload);
                 return res.status(200).json({
-                    "token":token
+                    "token": token
                 });
             }
         } else {
@@ -41,5 +43,34 @@ const userLogin = async (req, res) => {
     }
 }
 
+const changePassword = async (req, res) => {
+  const userId = req.user.id;
+  const { oldPassword, newPassword } = req.body;
 
-module.exports = { userSignUp, userLogin };
+  try {
+    if (!oldPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "Both old and new passwords are required" });
+    }
+
+    const [user] = await db.query("SELECT password FROM users WHERE id = ?", [userId]);
+
+    if (!user || user.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user[0].password !== oldPassword) {
+      return res.status(401).json({ message: "Old password is incorrect" });
+    }
+
+    await db.query("UPDATE users SET password = ? WHERE id = ?", [newPassword, userId]);
+
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (error) {
+    console.error("Error changing password:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+module.exports = { userSignUp, userLogin, changePassword };

@@ -22,11 +22,11 @@ const RenderLayout = () => {
             break;
 
           case "ADMIN":
-            navigate("/admin-dashboard");
+            navigate("/admin/dashboard");
             break;
 
           case "STORE_OWNER":
-            navigate("/store-dashboard");
+            navigate("/store/dashboard");
             break;
 
           default:

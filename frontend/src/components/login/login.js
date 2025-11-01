@@ -9,7 +9,7 @@ function Login() {
     email: "",
     password: "",
   });
-
+  const [alert, setAlert] = useState({ type: "", message: "" });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
@@ -49,14 +49,16 @@ function Login() {
         .then((response) => {
           console.log("Login successful:", response.data);
           localStorage.setItem("token", response.data.token);
+          setAlert({ type: "success", message: "Login successful!" });
           navigate('/')
         })
         .catch((error) => {
           console.error("Login failed:", error.response?.data || error.message);
+          const errMsg =
+            error.response?.data?.message ||
+            "Invalid email or password. Please try again.";
+          setAlert({ type: "danger", message: errMsg });
         });
-
-      alert("Login Successful!");
-      console.log("Login Data:", formData);
       setFormData({ email: "", password: "" });
       setErrors({});
     }
@@ -68,6 +70,11 @@ function Login() {
         <div className="col-md-5">
           <div className="card p-4 shadow-sm">
             <h2 className="text-center mb-4 text-primary">User Login</h2>
+            {alert.message && (
+              <div className={`alert alert-${alert.type} text-center`} role="alert">
+                {alert.message}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} noValidate>
               {/* Email */}

@@ -1,132 +1,109 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../../API/axios_instance";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const StoreDashboard = () => {
-  // Dummy rating data from users
-  const [ratings, setRatings] = useState([
-    { id: 1, userName: "Yuvraj Lolage", comment: "Great service!", rating: 5 },
-    { id: 2, userName: "Aisha Verma", comment: "Good experience overall.", rating: 4 },
-    { id: 3, userName: "Rahul Singh", comment: "Could improve decoration quality.", rating: 3 },
-    { id: 4, userName: "Priya Sharma", comment: "Amazing staff and coordination!", rating: 5 },
-  ]);
+  const [storeData, setStoreData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Calculate average rating
-  const averageRating =
-    ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
+  useEffect(() => {
+    const fetchStoreData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axiosInstance.get("/ratings/store/ratings", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setStoreData(res.data);
+      } catch (err) {
+        console.error("Failed to fetch store details:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Password update state
-  const [passwordForm, setPasswordForm] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
+    fetchStoreData();
+  }, []);
 
-  // Handle password field change
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
-    setPasswordForm({ ...passwordForm, [name]: value });
-  };
+  if (loading) {
+    return (
+      <div className="text-center mt-5">
+        <div className="spinner-border text-primary" role="status"></div>
+      </div>
+    );
+  }
 
-  // Handle password update
-  const handleUpdatePassword = (e) => {
-    e.preventDefault();
-    const { currentPassword, newPassword, confirmPassword } = passwordForm;
+  if (!storeData) {
+    return (
+      <div className="container text-center mt-5">
+        <h4>No store data available.</h4>
+      </div>
+    );
+  }
 
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      alert("All fields are required!");
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      alert("New passwords do not match!");
-      return;
-    }
-
-    alert("Password updated successfully!");
-    setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
-  };
-
-  // Handle logout
-  const handleLogout = () => {
-    alert("Logged out successfully!");
-    // Clear tokens/session logic here
-  };
+  const { store_name, total_ratings, average_rating, ratings } = storeData;
 
   return (
     <div className="container my-5">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="fw-bold text-primary text-center">Store Owner Dashboard</h2>
-      </div>
+      <h2 className="fw-bold text-center mb-4">{store_name}</h2>
 
-      {/* ====== Average Rating Section ====== */}
-      <div className="card shadow-sm mb-5 border-0">
-        <div className="card-body text-center">
-          <h5 className="fw-semibold">Average Store Rating</h5>
-          <h2 className="text-warning">{averageRating.toFixed(1)} ⭐</h2>
-          <p className="text-muted">Based on {ratings.length} user reviews</p>
-        </div>
-      </div>
-
-      {/* ====== Ratings List ====== */}
-      <div className="card shadow-sm mb-5 border-0">
-        <div className="card-body">
-          <h5 className="fw-semibold mb-3 text-success">User Ratings</h5>
-          {ratings.map((r) => (
-            <div key={r.id} className="border-bottom py-2">
-              <strong>{r.userName}</strong> — <span className="text-warning">{r.rating} ⭐</span>
-              <p className="mb-1 text-muted">{r.comment}</p>
+      {/* Store Summary */}
+      <div className="row mb-4 text-center">
+        <div className="col-md-4">
+          <div className="card shadow-sm border-0 bg-primary text-white">
+            <div className="card-body">
+              <h5>Total Ratings</h5>
+              <h3>{total_ratings}</h3>
             </div>
-          ))}
+          </div>
+        </div>
+        <div className="col-md-4">
+          <div className="card shadow-sm border-0 bg-success text-white">
+            <div className="card-body">
+              <h5>Average Rating</h5>
+              <h3>{average_rating}</h3>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* ====== Update Password Section ====== */}
+      {/* Ratings Table */}
       <div className="card shadow-sm border-0">
         <div className="card-body">
-          <h5 className="fw-semibold mb-3 text-primary">Update Password</h5>
-          <form onSubmit={handleUpdatePassword}>
-            <div className="row g-3">
-              <div className="col-md-4">
-                <label className="form-label">Current Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  name="currentPassword"
-                  value={passwordForm.currentPassword}
-                  onChange={handlePasswordChange}
-                  required
-                />
-              </div>
-              <div className="col-md-4">
-                <label className="form-label">New Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  name="newPassword"
-                  value={passwordForm.newPassword}
-                  onChange={handlePasswordChange}
-                  required
-                />
-              </div>
-              <div className="col-md-4">
-                <label className="form-label">Confirm New Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  name="confirmPassword"
-                  value={passwordForm.confirmPassword}
-                  onChange={handlePasswordChange}
-                  required
-                />
-              </div>
+          <h4 className="text-primary fw-semibold mb-3">Ratings Received</h4>
+          {ratings.length > 0 ? (
+            <div className="table-responsive">
+              <table className="table table-bordered align-middle text-center">
+                <thead className="table-dark">
+                  <tr>
+                    <th>Rating ID</th>
+                    <th>Rated By</th>
+                    <th>Email</th>
+                    <th>Rating</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ratings.map((r) => (
+                    <tr key={r.rating_id}>
+                      <td>{r.rating_id}</td>
+                      <td>{r.rated_by}</td>
+                      <td>{r.rated_by_email}</td>
+                      <td>
+                        <span className="badge bg-warning text-dark fs-6">
+                          ⭐ {r.rating_value}
+                        </span>
+                      </td>
+                      <td>{new Date(r.created_at).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-
-            <div className="text-end mt-3">
-              <button type="submit" className="btn btn-primary">
-                Update Password
-              </button>
-            </div>
-          </form>
+          ) : (
+            <p className="text-muted">No ratings yet.</p>
+          )}
         </div>
       </div>
     </div>

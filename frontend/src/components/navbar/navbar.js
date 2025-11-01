@@ -57,7 +57,6 @@ const Navbar = () => {
           {isLogin && (
             <ul className="navbar-nav ms-auto align-items-center">
 
-              {/* ✅ Role-based Tabs */}
               {role === "ADMIN" && (
                 <>
                   <li className="nav-item">
@@ -78,21 +77,6 @@ const Navbar = () => {
                 </>
               )}
 
-              {role === "STORE_OWNER" && (
-                <>
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/vendor/profile">
-                      My Profile
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/vendor/reviews">
-                      Reviews
-                    </Link>
-                  </li>
-                </>
-              )}
-
               {role === "USER" && (
                 <>
                  <li className="nav-item">
@@ -105,13 +89,14 @@ const Navbar = () => {
                       View Stores
                     </Link>
                   </li>
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/user/ratings">
-                      My Ratings
-                    </Link>
-                  </li>
                 </>
               )}
+
+              <li className="nav-item">
+                    <Link className="nav-link" to="/change-password">
+                      Change Password
+                    </Link>
+                  </li>
 
               <li className="nav-item ms-3">
                 <button className="btn btn-info" onClick={logout}>

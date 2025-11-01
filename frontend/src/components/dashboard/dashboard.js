@@ -51,7 +51,7 @@ const Dashboard = () => {
     try {
       const payload = { storeId, rating };
 
-      const res = await axiosInstance.post("  /ratings", payload, {
+      const res = await axiosInstance.post("/ratings", payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

@@ -11,6 +11,7 @@ import RenderLayout from './components/render_layout/render_layout';
 import Navbar from './components/navbar/navbar';
 import Users from './components/admin/users';
 import Stores from './components/admin/stores';
+import ChangePassword from './components/change_password/change_password';
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route path="/" element={<RenderLayout />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/change-password" element={<ChangePassword />} />
 
         {/* Normal User routes */}
         <Route path="/dashboard" element={<Dashboard />} />
@@ -32,7 +34,7 @@ function App() {
         <Route path="/admin/dashboard/stores" element={<Stores />} />
 
         {/* store owner routes */}
-        <Route path="/store-dashboard" element={<StoreDashboard />} />
+        <Route path="/store/dashboard" element={<StoreDashboard />} />
       </Routes>
     </BrowserRouter>
     // <h1>
