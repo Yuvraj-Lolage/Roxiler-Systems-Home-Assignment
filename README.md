@@ -53,4 +53,13 @@ npm install
 npm start
 ```
 
+---
+
+### 🖼️ Execution Screenshots
+
+#### Login / Dashboard View
+![Execution Screenshot 1](<image/Screenshot 2026-04-27 at 5.56.28 PM.png>)
+
+#### Admin / Management View
+![Execution Screenshot 2](<image/Screenshot 2026-04-27 at 5.56.43 PM.png>)
 
