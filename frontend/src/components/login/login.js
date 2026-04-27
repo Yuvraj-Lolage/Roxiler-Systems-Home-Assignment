@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // eye icons
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axiosInstance from "../../API/axios_instance";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FiArrowRight, FiShield, FiZap } from "react-icons/fi";
+import "./login.css";
 
 function Login() {
   const navigate = useNavigate();
@@ -12,7 +14,7 @@ function Login() {
   const [alert, setAlert] = useState({ type: "", message: "" });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validate = () => {
     const newErrors = {};
@@ -41,94 +43,146 @@ function Login() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validate()) {
-      axiosInstance
-        .post("/user/login", formData)
-        .then((response) => {
-          console.log("Login successful:", response.data);
-          localStorage.setItem("token", response.data.token);
-          setAlert({ type: "success", message: "Login successful!" });
-          navigate('/')
-        })
-        .catch((error) => {
-          console.error("Login failed:", error.response?.data || error.message);
-          const errMsg =
-            error.response?.data?.message ||
-            "Invalid email or password. Please try again.";
-          setAlert({ type: "danger", message: errMsg });
-        });
+    if (!validate()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setAlert({ type: "", message: "" });
+
+    try {
+      const response = await axiosInstance.post("/user/login", formData);
+      localStorage.setItem("token", response.data.token);
+      setAlert({ type: "success", message: "Login successful!" });
       setFormData({ email: "", password: "" });
       setErrors({});
+      navigate("/");
+    } catch (error) {
+      console.error("Login failed:", error.response?.data || error.message);
+      const errMsg =
+        error.response?.data?.message ||
+        "Invalid email or password. Please try again.";
+      setAlert({ type: "danger", message: errMsg });
+      setFormData((prev) => ({ ...prev, password: "" }));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="container mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-5">
-          <div className="card p-4 shadow-sm">
-            <h2 className="text-center mb-4 text-primary">User Login</h2>
-            {alert.message && (
-              <div className={`alert alert-${alert.type} text-center`} role="alert">
-                {alert.message}
-              </div>
-            )}
+    <div className="login-page">
+      <div className="login-orb login-orb-one"></div>
+      <div className="login-orb login-orb-two"></div>
 
-            <form onSubmit={handleSubmit} noValidate>
-              {/* Email */}
-              <div className="mb-3">
-                <label className="form-label">Email Address</label>
+      <div className="login-shell">
+        <section className="login-hero-card">
+          <div className="login-kicker">
+            <FiZap />
+            Secure Access Layer
+          </div>
+          <h1>Step back into your store network with a sharper control surface.</h1>
+          <p>
+            Review ratings, manage activity, and move through the platform with
+            a faster, cleaner sign-in experience.
+          </p>
+
+          <div className="login-feature-list">
+            <div className="login-feature-card">
+              <FiShield />
+              <div>
+                <strong>Protected sessions</strong>
+                <span>JWT-based access with encrypted password verification.</span>
+              </div>
+            </div>
+            <div className="login-feature-card">
+              <FiArrowRight />
+              <div>
+                <strong>Fast routing</strong>
+                <span>Jump straight to the dashboard that matches your role.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="login-form-card">
+          <div className="login-form-header">
+            <span className="login-form-eyebrow">Welcome Back</span>
+            <h2>User Login</h2>
+            <p>Enter your credentials to continue.</p>
+          </div>
+
+          {alert.message && (
+            <div
+              className={`login-alert ${
+                alert.type === "success" ? "is-success" : "is-error"
+              }`}
+              role="alert"
+            >
+              {alert.message}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} noValidate className="login-form">
+            <div className="login-field">
+              <label className="login-label">Email Address</label>
+              <div className="login-input-shell">
                 <input
                   type="email"
                   name="email"
-                  className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                  className={`login-input ${errors.email ? "is-invalid" : ""}`}
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleChange}
                   required
                 />
-                {errors.email && (
-                  <div className="invalid-feedback">{errors.email}</div>
-                )}
               </div>
+              {errors.email && (
+                <div className="login-error-text">{errors.email}</div>
+              )}
+            </div>
 
-              {/* Password with eye toggle */}
-              <div className="mb-3 position-relative">
-                <label className="form-label">Password</label>
-                <div className="input-group">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    className={`form-control ${errors.password ? "is-invalid" : ""
-                      }`}
-                    placeholder="Enter your password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                  />
-                  <span
-                    className="input-group-text"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </span>
-                  {errors.password && (
-                    <div className="invalid-feedback d-block">
-                      {errors.password}
-                    </div>
-                  )}
-                </div>
+            <div className="login-field">
+              <label className="login-label">Password</label>
+              <div className="login-input-shell">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  className={`login-input ${errors.password ? "is-invalid" : ""}`}
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+                <button
+                  type="button"
+                  className="login-visibility-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
+              {errors.password && (
+                <div className="login-error-text">{errors.password}</div>
+              )}
+            </div>
 
-              <button type="submit" className="btn btn-primary w-100">
-                Login
-              </button>
-            </form>
-          </div>
-        </div>
+            <button
+              type="submit"
+              className="login-submit-btn"
+              disabled={isSubmitting}
+            >
+              <span>{isSubmitting ? "Signing In..." : "Login"}</span>
+              <FiArrowRight />
+            </button>
+
+            <p className="login-footer-note">
+              New to the platform? <Link to="/signup">Create an account</Link>
+            </p>
+          </form>
+        </section>
       </div>
     </div>
   );

@@ -12,6 +12,8 @@ import Navbar from './components/navbar/navbar';
 import Users from './components/admin/users';
 import Stores from './components/admin/stores';
 import ChangePassword from './components/change_password/change_password';
+import AddUser from './components/admin/add_user';
+import AddStore from './components/admin/add_store';
 
 
 function App() {
@@ -32,6 +34,8 @@ function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/dashboard/users" element={<Users />} />
         <Route path="/admin/dashboard/stores" element={<Stores />} />
+        <Route path="/admin/dashboard/add-user" element={<AddUser />} />
+        <Route path="/admin/dashboard/add-store" element={<AddStore />} />
 
         {/* store owner routes */}
         <Route path="/store/dashboard" element={<StoreDashboard />} />

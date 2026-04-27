@@ -1,5 +1,7 @@
 const RatingModel = require("../models/ratings");
 const db = require("../config/db");
+const { buildPaginatedResponse, parsePagination } = require("../utils/pagination");
+
 const submitRating = async (req, res) => {
   try {
     const userId = req.user?.id || req.body.userId;
@@ -34,6 +36,7 @@ const submitRating = async (req, res) => {
 const getStoreDetailsAndAvgRating = async (req, res) => {
   try {
     const ownerId = req.user.id;
+    const pagination = parsePagination(req.query);
 
     const [storeRows] = await db.query(
       "SELECT id AS store_id, name AS store_name FROM stores WHERE owner_id = ?",
@@ -46,13 +49,22 @@ const getStoreDetailsAndAvgRating = async (req, res) => {
 
     const { store_id, store_name } = storeRows[0];
 
+    const [[{ totalRatings }]] = await db.query(
+      "SELECT COUNT(*) AS totalRatings FROM ratings WHERE store_id = ?",
+      [store_id]
+    );
+
     const [ratingRows] = await db.query(
       `SELECT r.id AS rating_id, r.rating_value, 
               u.name AS rated_by, u.email AS rated_by_email, r.created_at
        FROM ratings r
        JOIN users u ON r.user_id = u.id
-       WHERE r.store_id = ?`,
-      [store_id]
+       WHERE r.store_id = ?
+       ORDER BY r.created_at DESC
+       ${pagination.isPaginatedRequest ? "LIMIT ? OFFSET ?" : ""}`,
+      pagination.isPaginatedRequest
+        ? [store_id, pagination.limit, pagination.offset]
+        : [store_id]
     );
 
     const [avgResult] = await db.query(
@@ -62,13 +74,24 @@ const getStoreDetailsAndAvgRating = async (req, res) => {
 
     const avgRating = avgResult[0].avg_rating || 0;
 
-    res.status(200).json({
+    const response = {
       store_id,
       store_name,
-      total_ratings: ratingRows.length,
+      total_ratings: totalRatings,
       average_rating: parseFloat(avgRating).toFixed(1),
       ratings: ratingRows,
-    });
+    };
+
+    if (pagination.isPaginatedRequest) {
+      response.ratings = buildPaginatedResponse({
+        rows: ratingRows,
+        total: totalRatings,
+        page: pagination.page,
+        limit: pagination.limit,
+      });
+    }
+
+    res.status(200).json(response);
 
   } catch (error) {
     console.error("Error fetching store ratings:", error);

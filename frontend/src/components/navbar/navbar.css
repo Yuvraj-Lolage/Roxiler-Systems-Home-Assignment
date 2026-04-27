@@ -1,0 +1,135 @@
+.futuristic-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 18px 0;
+  background:
+    linear-gradient(180deg, rgba(4, 10, 18, 0.94), rgba(8, 18, 31, 0.88));
+  backdrop-filter: blur(16px);
+}
+
+.navbar-shell {
+  padding: 14px 18px;
+  border: 1px solid rgba(109, 215, 255, 0.16);
+  border-radius: 24px;
+  background: rgba(8, 17, 29, 0.74);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+}
+
+.futuristic-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #f3fbff;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.futuristic-brand:hover {
+  color: #f3fbff;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(109, 215, 255, 0.22);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(104, 225, 253, 0.24), rgba(29, 233, 182, 0.14));
+  color: #6de3ff;
+  font-size: 0.9rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.futuristic-navbar-toggler {
+  border: 1px solid rgba(109, 215, 255, 0.18);
+  border-radius: 14px;
+  padding: 8px 10px;
+  box-shadow: none;
+}
+
+.futuristic-navbar-toggler:focus {
+  box-shadow: 0 0 0 4px rgba(104, 225, 253, 0.12);
+}
+
+.futuristic-navbar-toggler-icon {
+  filter: brightness(1.4);
+}
+
+.futuristic-nav-list {
+  gap: 10px;
+}
+
+.futuristic-nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 16px !important;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: #b8c8db !important;
+  font-weight: 500;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.futuristic-nav-link:hover {
+  color: #f3fbff !important;
+  border-color: rgba(109, 215, 255, 0.14);
+  background: rgba(104, 225, 253, 0.08);
+  transform: translateY(-1px);
+}
+
+.futuristic-nav-link.is-active {
+  color: #06131f !important;
+  border-color: rgba(109, 215, 255, 0.2);
+  background: linear-gradient(135deg, #69e2ff, #9bffd8);
+  box-shadow: 0 12px 24px rgba(104, 225, 253, 0.2);
+}
+
+.futuristic-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid rgba(255, 126, 158, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 126, 158, 0.1);
+  color: #ffd7e2;
+  font-weight: 600;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.futuristic-logout-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 126, 158, 0.35);
+  background: rgba(255, 126, 158, 0.16);
+  color: #fff1f5;
+}
+
+@media (max-width: 991px) {
+  .navbar-shell {
+    padding: 14px;
+  }
+
+  .futuristic-navbar-collapse {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(109, 215, 255, 0.1);
+  }
+
+  .futuristic-nav-list {
+    align-items: stretch !important;
+  }
+
+  .futuristic-nav-link,
+  .futuristic-logout-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

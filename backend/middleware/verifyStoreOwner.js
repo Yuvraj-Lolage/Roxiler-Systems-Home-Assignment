@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+const jwt = require("jsonwebtoken");
 
 const verifyStoreOwner = (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -29,4 +29,4 @@ const verifyStoreOwner = (req, res, next) => {
   }
 };
 
-export default verifyStoreOwner;
+module.exports = verifyStoreOwner;

@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axiosInstance from "../../API/axios_instance";
+import "../dashboard/admin_dashboard.css";
+import "./admin_tables.css";
+import { FiArrowUpRight, FiShield, FiUser, FiUsers } from "react-icons/fi";
 
 const Users = () => {
   const [userData, setUserData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(()=>{
-     const fetchUsers = async () => {
+  useEffect(() => {
+    const fetchUsers = async () => {
       try {
         const res = await axiosInstance.get("/admin/users", {
           headers: {
@@ -16,58 +20,124 @@ const Users = () => {
         setUserData(res.data);
       } catch (err) {
         console.error("Failed to fetch stats:", err.response?.data || err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchUsers()
-  },[])
-  return (
-    <div className="container my-5">
-      <h2 className="text-center fw-bold mb-4">System Administrator Dashboard</h2>
+    fetchUsers();
+  }, []);
 
-      {/* ======= Table of Users ======= */}
-      <div className="card shadow-sm border-0">
-        <div className="card-body">
-          <h4 className="mb-3 text-primary fw-semibold">User Accounts Overview</h4>
-          <div className="table-responsive">
-            <table className="table table-bordered table-striped align-middle">
-              <thead className="table-dark text-center">
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Role</th>
-                  <th scope="col">Password</th>
-                </tr>
-              </thead>
-              <tbody>
-                {userData.map((user) => (
-                  <tr key={user.id}>
-                    <td className="text-center">{user.id}</td>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td className="text-center">
-                      <span
-                        className={`badge ${
-                          user.role === "ADMIN"
-                            ? "bg-danger"
-                            : user.role === "STORE_OWNER"
-                            ? "bg-success"
-                            : "bg-secondary"
-                        }`}
-                      >
-                        {user.role}
-                      </span>
-                    </td>
-                    <td>
-                      <span className="text-muted">{user.password}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+  const totalAdmins = userData.filter((user) => user.role === "ADMIN").length;
+  const totalStoreOwners = userData.filter(
+    (user) => user.role === "STORE_OWNER"
+  ).length;
+
+  return (
+    <div className="admin-page">
+      <div className="admin-orb admin-orb-one"></div>
+      <div className="admin-orb admin-orb-two"></div>
+
+      <div className="admin-shell">
+        <section className="admin-table-hero">
+          <div className="admin-hero-copy">
+            <span className="admin-kicker">
+              <FiUsers />
+              User Directory
+            </span>
+            <h1>Manage platform accounts with a cleaner, live admin roster.</h1>
+            <p>
+              Review user access, monitor account mix, and scan role coverage in
+              a more modern data surface.
+            </p>
           </div>
-        </div>
+
+          <div className="admin-actions-panel">
+            <div className="admin-mini-note">
+              <FiArrowUpRight />
+              <span>Use this page to verify who has access and what role they hold across the platform.</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="admin-table-stats">
+          <article className="admin-stat-card">
+            <div className="admin-stat-icon users">
+              <FiUsers />
+            </div>
+            <span className="admin-stat-label">Total Accounts</span>
+            <strong>{userData.length}</strong>
+            <span className="admin-stat-meta">All users currently in the system</span>
+          </article>
+
+          <article className="admin-stat-card">
+            <div className="admin-stat-icon ratings">
+              <FiShield />
+            </div>
+            <span className="admin-stat-label">Admins</span>
+            <strong>{totalAdmins}</strong>
+            <span className="admin-stat-meta">Accounts with administrative control</span>
+          </article>
+
+          <article className="admin-stat-card">
+            <div className="admin-stat-icon stores">
+              <FiUser />
+            </div>
+            <span className="admin-stat-label">Store Owners</span>
+            <strong>{totalStoreOwners}</strong>
+            <span className="admin-stat-meta">Accounts linked to store management</span>
+          </article>
+        </section>
+
+        <section className="admin-table-card">
+          <div className="admin-table-card-header">
+            <div>
+              <span className="admin-overview-kicker">Access Overview</span>
+              <h2>User Accounts</h2>
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="admin-table-empty">Loading user accounts...</div>
+          ) : userData.length > 0 ? (
+            <div className="table-responsive">
+              <table className="table admin-modern-table align-middle">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {userData.map((user) => (
+                    <tr key={user.id}>
+                      <td className="admin-table-id">{user.id}</td>
+                      <td>{user.name}</td>
+                      <td className="admin-table-muted">{user.email}</td>
+                      <td>
+                        <span
+                          className={`admin-role-pill ${
+                            user.role === "ADMIN"
+                              ? "is-admin"
+                              : user.role === "STORE_OWNER"
+                              ? "is-owner"
+                              : "is-user"
+                          }`}
+                        >
+                          {user.role}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="admin-table-empty">No user accounts found.</div>
+          )}
+        </section>
       </div>
     </div>
   );

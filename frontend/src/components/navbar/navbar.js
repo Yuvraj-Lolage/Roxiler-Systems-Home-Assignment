@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import {jwtDecode} from "jwt-decode"; // install this: npm install jwt-decode
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./navbar.css";
+import { FiLogOut } from "react-icons/fi";
 
 const Navbar = () => {
   const [isLogin, setIsLogin] = useState(false);
@@ -35,14 +37,15 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-      <div className="container">
-        <Link className="navbar-brand fw-bold" to="/">
+    <nav className="navbar navbar-expand-lg futuristic-navbar">
+      <div className="container navbar-shell">
+        <Link className="navbar-brand futuristic-brand" to="/">
+          <span className="brand-mark">SR</span>
           Store Ratings Platform
         </Link>
 
         <button
-          className="navbar-toggler"
+          className="navbar-toggler futuristic-navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
@@ -50,56 +53,77 @@ const Navbar = () => {
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <span className="navbar-toggler-icon"></span>
+          <span className="navbar-toggler-icon futuristic-navbar-toggler-icon"></span>
         </button>
 
-        <div className="collapse navbar-collapse" id="navbarNav">
+        <div className="collapse navbar-collapse futuristic-navbar-collapse" id="navbarNav">
           {isLogin && (
-            <ul className="navbar-nav ms-auto align-items-center">
+            <ul className="navbar-nav ms-auto align-items-center futuristic-nav-list">
 
               {role === "ADMIN" && (
                 <>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/admin/dashboard">
+                    <NavLink
+                      className={({ isActive }) =>
+                        `nav-link futuristic-nav-link ${isActive ? "is-active" : ""}`
+                      }
+                      to="/admin/dashboard"
+                    >
                       Admin Dashboard
-                    </Link>
-                  </li>
-                   <li className="nav-item">
-                    <Link className="nav-link" to="/admin/dashboard/users">
-                      Manage Users
-                    </Link>
+                    </NavLink>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/admin/dashboard/stores">
+                    <NavLink
+                      className={({ isActive }) =>
+                        `nav-link futuristic-nav-link ${isActive ? "is-active" : ""}`
+                      }
+                      to="/admin/dashboard/users"
+                    >
+                      Manage Users
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink
+                      className={({ isActive }) =>
+                        `nav-link futuristic-nav-link ${isActive ? "is-active" : ""}`
+                      }
+                      to="/admin/dashboard/stores"
+                    >
                       Manage Stores
-                    </Link>
+                    </NavLink>
                   </li>
                 </>
               )}
 
               {role === "USER" && (
                 <>
-                 <li className="nav-item">
-                    <Link className="nav-link" to="/dashboard">
-                      Dashboard
-                    </Link>
-                  </li>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/user/stores">
-                      View Stores
-                    </Link>
+                    <NavLink
+                      className={({ isActive }) =>
+                        `nav-link futuristic-nav-link ${isActive ? "is-active" : ""}`
+                      }
+                      to="/dashboard"
+                    >
+                      Dashboard
+                    </NavLink>
                   </li>
                 </>
               )}
 
               <li className="nav-item">
-                    <Link className="nav-link" to="/change-password">
-                      Change Password
-                    </Link>
-                  </li>
+                <NavLink
+                  className={({ isActive }) =>
+                    `nav-link futuristic-nav-link ${isActive ? "is-active" : ""}`
+                  }
+                  to="/change-password"
+                >
+                  Change Password
+                </NavLink>
+              </li>
 
-              <li className="nav-item ms-3">
-                <button className="btn btn-info" onClick={logout}>
+              <li className="nav-item ms-lg-3">
+                <button className="btn futuristic-logout-btn" onClick={logout}>
+                  <FiLogOut />
                   Logout
                 </button>
               </li>

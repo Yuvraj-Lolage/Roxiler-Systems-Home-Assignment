@@ -1,49 +1,19 @@
 import React, { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import axiosInstance from "../../API/axios_instance";
 import { Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import axiosInstance from "../../API/axios_instance";
+import "./admin_dashboard.css";
+import {
+  FiActivity,
+  FiArrowUpRight,
+  FiHome,
+  FiPlus,
+  FiShield,
+  FiUsers,
+} from "react-icons/fi";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({ totalUsers: 0, totalStores: 0, totalRatings: 0 });
-
-  const [newUser, setNewUser] = useState({
-    name: "",
-    email: "",
-    password: "",
-    address: "",
-    role: "user",
-  });
-
-  const [newStore, setNewStore] = useState({
-    name: "",
-    email: "",
-    address: "",
-  });
-
-  const handleUserChange = (e) => {
-    const { name, value } = e.target;
-    setNewUser({ ...newUser, [name]: value });
-  };
-
-  const handleStoreChange = (e) => {
-    const { name, value } = e.target;
-    setNewStore({ ...newStore, [name]: value });
-  };
-
-  const handleAddUser = (e) => {
-    e.preventDefault();
-    alert(`${newUser.role} added successfully!`);
-    setStats({ ...stats, users: stats.users + 1 });
-    setNewUser({ name: "", email: "", password: "", address: "", role: "user" });
-  };
-
-  const handleAddStore = (e) => {
-    e.preventDefault();
-    alert("Store added successfully!");
-    setStats({ ...stats, stores: stats.stores + 1 });
-    setNewStore({ name: "", email: "", address: "" });
-  };
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -63,219 +33,104 @@ const AdminDashboard = () => {
   }, []);
 
   return (
-    <div className="container my-5">
-      <h2 className="text-center fw-bold mb-5 text-primary">
-        System Administrator Dashboard
-      </h2>
+    <div className="admin-page">
+      <div className="admin-orb admin-orb-one"></div>
+      <div className="admin-orb admin-orb-two"></div>
 
-      {/* ===== Dashboard Summary Cards ===== */}
-      <div className="row g-4 text-center mb-5">
-        <div className="col-md-4">
-          <div className="card shadow-sm border-0 bg-primary text-white rounded-4">
-            <div className="card-body">
-              <h5>Total Users</h5>
-              <h1>{stats.totalUsers}</h1>
+      <div className="admin-shell">
+        <section className="admin-hero">
+          <div className="admin-hero-copy">
+            <span className="admin-kicker">
+              <FiShield />
+              Administrator Control Grid
+            </span>
+            <h1>Oversee platform growth, user access, and store operations from one command center.</h1>
+            <p>
+              Track system health, manage new entities, and keep the platform
+              organized with a more focused administrative workspace.
+            </p>
+          </div>
+
+          <div className="admin-actions-panel">
+            <Link
+              className="admin-action-btn primary admin-action-link"
+              to="/admin/dashboard/add-user"
+            >
+              <FiPlus />
+              Add New User
+            </Link>
+
+            <Link
+              className="admin-action-btn secondary admin-action-link"
+              to="/admin/dashboard/add-store"
+            >
+              <FiHome />
+              Add New Store
+            </Link>
+
+            <div className="admin-mini-note">
+              <FiArrowUpRight />
+              <span>Use the management tabs above to review full user and store datasets.</span>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div className="col-md-4">
-          <div className="card shadow-sm border-0 bg-info text-white rounded-4">
-            <div className="card-body">
-              <h5>Total Stores</h5>
-              <h1>{stats.totalStores}</h1>
+        <section className="admin-stats-grid">
+          <article className="admin-stat-card">
+            <div className="admin-stat-icon users">
+              <FiUsers />
+            </div>
+            <span className="admin-stat-label">Total Users</span>
+            <strong>{stats.totalUsers}</strong>
+            <span className="admin-stat-meta">Registered accounts in the system</span>
+          </article>
+
+          <article className="admin-stat-card">
+            <div className="admin-stat-icon stores">
+              <FiHome />
+            </div>
+            <span className="admin-stat-label">Total Stores</span>
+            <strong>{stats.totalStores}</strong>
+            <span className="admin-stat-meta">Retail nodes currently listed</span>
+          </article>
+
+          <article className="admin-stat-card">
+            <div className="admin-stat-icon ratings">
+              <FiActivity />
+            </div>
+            <span className="admin-stat-label">Total Ratings</span>
+            <strong>{stats.totalRatings}</strong>
+            <span className="admin-stat-meta">User engagement across the network</span>
+          </article>
+        </section>
+
+        <section className="admin-overview-card">
+          <div className="admin-overview-header">
+            <div>
+              <span className="admin-overview-kicker">System Snapshot</span>
+              <h2>Platform overview</h2>
+            </div>
+            <span className="admin-overview-chip">Live admin summary</span>
+          </div>
+
+          <div className="admin-overview-grid">
+            <div className="admin-overview-panel">
+              <span>User footprint</span>
+              <strong>{stats.totalUsers}</strong>
+              <p>Accounts currently able to access role-based workflows.</p>
+            </div>
+            <div className="admin-overview-panel">
+              <span>Store coverage</span>
+              <strong>{stats.totalStores}</strong>
+              <p>Store records available for ratings, reviews, and oversight.</p>
+            </div>
+            <div className="admin-overview-panel">
+              <span>Engagement pulse</span>
+              <strong>{stats.totalRatings}</strong>
+              <p>Ratings powering analytics and store performance visibility.</p>
             </div>
           </div>
-        </div>
-
-        <div className="col-md-4">
-          <div className="card shadow-sm border-0 bg-secondary text-white rounded-4">
-            <div className="card-body">
-              <h5>Total Ratings</h5>
-              <h1>{stats.totalRatings}</h1>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ===== Action Buttons ===== */}
-      <div className="text-center mb-4">
-        <button
-          className="btn btn-primary px-4 me-3"
-          data-bs-toggle="modal"
-          data-bs-target="#addUserModal"
-        >
-          Add New User
-        </button>
-
-        <button
-          className="btn btn-info px-4 text-white"
-          data-bs-toggle="modal"
-          data-bs-target="#addStoreModal"
-        >
-           Add New Store
-        </button>
-      </div>
-
-      {/* ===== Add User Modal ===== */}
-      <div
-        className="modal fade"
-        id="addUserModal"
-        tabIndex="-1"
-        aria-labelledby="addUserModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content border-0 shadow">
-            <div className="modal-header bg-primary text-white">
-              <h5 className="modal-title" id="addUserModalLabel">
-                Add New User
-              </h5>
-              <button
-                type="button"
-                className="btn-close btn-close-white"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body">
-              <form onSubmit={handleAddUser}>
-                <div className="mb-3">
-                  <label className="form-label">Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={newUser.name}
-                    onChange={handleUserChange}
-                    className="form-control"
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={newUser.email}
-                    onChange={handleUserChange}
-                    className="form-control"
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Password</label>
-                  <input
-                    type="password"
-                    name="password"
-                    value={newUser.password}
-                    onChange={handleUserChange}
-                    className="form-control"
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Address</label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={newUser.address}
-                    onChange={handleUserChange}
-                    className="form-control"
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Role</label>
-                  <select
-                    name="role"
-                    value={newUser.role}
-                    onChange={handleUserChange}
-                    className="form-select"
-                  >
-                    <option value="user">Normal User</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                </div>
-
-                <button type="submit" className="btn btn-primary w-100">
-                  Add User
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ===== Add Store Modal ===== */}
-      <div
-        className="modal fade"
-        id="addStoreModal"
-        tabIndex="-1"
-        aria-labelledby="addStoreModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content border-0 shadow">
-            <div className="modal-header bg-info text-white">
-              <h5 className="modal-title" id="addStoreModalLabel">
-                Add New Store
-              </h5>
-              <button
-                type="button"
-                className="btn-close btn-close-white"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body">
-              <form onSubmit={handleAddStore}>
-                <div className="mb-3">
-                  <label className="form-label">Store Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={newStore.name}
-                    onChange={handleStoreChange}
-                    className="form-control"
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={newStore.email}
-                    onChange={handleStoreChange}
-                    className="form-control"
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Address</label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={newStore.address}
-                    onChange={handleStoreChange}
-                    className="form-control"
-                    required
-                  />
-                </div>
-
-                <button type="submit" className="btn btn-info w-100 text-white">
-                  Add Store
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
+        </section>
       </div>
     </div>
   );

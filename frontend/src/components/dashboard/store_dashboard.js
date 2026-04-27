@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../API/axios_instance";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./store_dashboard.css";
+import {
+  FiActivity,
+  FiArrowUpRight,
+  FiBarChart2,
+  FiCalendar,
+  FiMail,
+  FiStar,
+} from "react-icons/fi";
 
 const StoreDashboard = () => {
   const [storeData, setStoreData] = useState(null);
@@ -28,54 +37,95 @@ const StoreDashboard = () => {
 
   if (loading) {
     return (
-      <div className="text-center mt-5">
-        <div className="spinner-border text-primary" role="status"></div>
+      <div className="store-page store-loading-shell">
+        <div className="store-loader-ring" role="status"></div>
+        <p className="store-loading-text">Loading store intelligence...</p>
       </div>
     );
   }
 
   if (!storeData) {
     return (
-      <div className="container text-center mt-5">
-        <h4>No store data available.</h4>
+      <div className="store-page store-loading-shell">
+        <div className="store-empty-card">No store data available.</div>
       </div>
     );
   }
 
   const { store_name, total_ratings, average_rating, ratings } = storeData;
+  const latestActivity =
+    ratings.length > 0
+      ? new Date(ratings[0].created_at).toLocaleDateString()
+      : "No activity yet";
 
   return (
-    <div className="container my-5">
-      <h2 className="fw-bold text-center mb-4">{store_name}</h2>
+    <div className="store-page">
+      <div className="store-orb store-orb-one"></div>
+      <div className="store-orb store-orb-two"></div>
 
-      {/* Store Summary */}
-      <div className="row mb-4 text-center">
-        <div className="col-md-4">
-          <div className="card shadow-sm border-0 bg-primary text-white">
-            <div className="card-body">
-              <h5>Total Ratings</h5>
-              <h3>{total_ratings}</h3>
+      <div className="store-shell">
+        <section className="store-hero">
+          <div className="store-hero-copy">
+            <span className="store-kicker">
+              <FiActivity />
+              Store Performance Grid
+            </span>
+            <h1>{store_name}</h1>
+            <p>
+              Monitor customer sentiment, rating volume, and recent feedback activity
+              from a cleaner store-owner command center.
+            </p>
+          </div>
+
+          <div className="store-hero-side">
+            <div className="store-mini-note">
+              <FiArrowUpRight />
+              <span>Track incoming ratings and use the activity table below to spot recent feedback patterns.</span>
             </div>
           </div>
-        </div>
-        <div className="col-md-4">
-          <div className="card shadow-sm border-0 bg-success text-white">
-            <div className="card-body">
-              <h5>Average Rating</h5>
-              <h3>{average_rating}</h3>
+        </section>
+
+        <section className="store-stats-grid">
+          <article className="store-stat-card">
+            <div className="store-stat-icon ratings">
+              <FiBarChart2 />
+            </div>
+            <span className="store-stat-label">Total Ratings</span>
+            <strong>{total_ratings}</strong>
+            <span className="store-stat-meta">All customer responses collected</span>
+          </article>
+
+          <article className="store-stat-card">
+            <div className="store-stat-icon average">
+              <FiStar />
+            </div>
+            <span className="store-stat-label">Average Rating</span>
+            <strong>{average_rating || "0.0"}</strong>
+            <span className="store-stat-meta">Current reputation score</span>
+          </article>
+
+          <article className="store-stat-card">
+            <div className="store-stat-icon activity">
+              <FiCalendar />
+            </div>
+            <span className="store-stat-label">Latest Activity</span>
+            <strong>{latestActivity}</strong>
+            <span className="store-stat-meta">Most recent rating date</span>
+          </article>
+        </section>
+
+        <section className="store-table-card">
+          <div className="store-table-header">
+            <div>
+              <span className="store-kicker small">Customer Activity</span>
+              <h2>Ratings Received</h2>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Ratings Table */}
-      <div className="card shadow-sm border-0">
-        <div className="card-body">
-          <h4 className="text-primary fw-semibold mb-3">Ratings Received</h4>
           {ratings.length > 0 ? (
             <div className="table-responsive">
-              <table className="table table-bordered align-middle text-center">
-                <thead className="table-dark">
+              <table className="table store-modern-table align-middle">
+                <thead>
                   <tr>
                     <th>Rating ID</th>
                     <th>Rated By</th>
@@ -87,24 +137,32 @@ const StoreDashboard = () => {
                 <tbody>
                   {ratings.map((r) => (
                     <tr key={r.rating_id}>
-                      <td>{r.rating_id}</td>
+                      <td className="store-table-id">{r.rating_id}</td>
                       <td>{r.rated_by}</td>
-                      <td>{r.rated_by_email}</td>
-                      <td>
-                        <span className="badge bg-warning text-dark fs-6">
-                          ⭐ {r.rating_value}
+                      <td className="store-table-muted">
+                        <span className="store-email-cell">
+                          <FiMail />
+                          {r.rated_by_email}
                         </span>
                       </td>
-                      <td>{new Date(r.created_at).toLocaleDateString()}</td>
+                      <td>
+                        <span className="store-rating-pill">
+                          <FiStar />
+                          {r.rating_value}
+                        </span>
+                      </td>
+                      <td className="store-table-muted">
+                        {new Date(r.created_at).toLocaleDateString()}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           ) : (
-            <p className="text-muted">No ratings yet.</p>
+            <div className="store-empty-card">No ratings yet.</div>
           )}
-        </div>
+        </section>
       </div>
     </div>
   );

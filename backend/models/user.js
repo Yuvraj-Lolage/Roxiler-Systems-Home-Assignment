@@ -9,12 +9,18 @@ class User {
     this.role = role;
   }
 
-  static async create(name, email, password) {
+  static async create(name, email, address, password, role = "USER") {
     const [result] = await db.query(
-      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-      [name, email, password]
+      "INSERT INTO users (name, email, address, password, role) VALUES (?, ?, ?, ?, ?)",
+      [name, email, address, password, role]
     );
-    return new User(result.insertId, name, email, password);
+    return {
+      id: result.insertId,
+      name,
+      email,
+      address,
+      role,
+    };
   }
 
   static async findById(id) {
@@ -32,8 +38,20 @@ class User {
   }
 
   static async findAll() {
-    const [rows] = await db.query("SELECT * FROM users");
-    return rows.map((row) => new User(row.id, row.name, row.email, row.password, row.role));
+    const [rows] = await db.query(
+      "SELECT id, name, email, address, role FROM users ORDER BY id DESC"
+    );
+    return rows;
+  }
+
+  static async findPaginated({ limit, offset }) {
+    const [[{ total }]] = await db.query("SELECT COUNT(*) AS total FROM users");
+    const [rows] = await db.query(
+      "SELECT id, name, email, address, role FROM users ORDER BY id DESC LIMIT ? OFFSET ?",
+      [limit, offset]
+    );
+
+    return { rows, total };
   }
 
   async update() {

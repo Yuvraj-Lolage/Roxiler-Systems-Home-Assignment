@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import axiosInstance from "../../API/axios_instance";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -9,6 +12,7 @@ function Signup() {
   });
 
   const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState("");
 
   // Validation logic
   const validate = () => {
@@ -59,18 +63,23 @@ function Signup() {
   };
 
   // Handle form submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      alert("Signup Successful!");
-      console.log("User Data:", formData);
-      setFormData({
-        name: "",
-        email: "",
-        address: "",
-        password: "",
-      });
-      setErrors({});
+      try {
+        await axiosInstance.post("/user/signup", formData);
+        setMessage("Signup successful. Please login.");
+        setFormData({
+          name: "",
+          email: "",
+          address: "",
+          password: "",
+        });
+        setErrors({});
+        setTimeout(() => navigate("/login"), 800);
+      } catch (error) {
+        setMessage(error.response?.data?.message || "Signup failed.");
+      }
     }
   };
 
@@ -80,6 +89,7 @@ function Signup() {
         <div className="col-md-6">
           <div className="card p-4 shadow-sm">
             <h2 className="text-center mb-4 text-primary">User Signup</h2>
+            {message && <div className="alert alert-info">{message}</div>}
             <form onSubmit={handleSubmit} noValidate>
               {/* Name */}
               <div className="mb-3">

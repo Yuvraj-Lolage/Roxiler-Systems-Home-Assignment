@@ -11,7 +11,7 @@ const RatingModel = {
 
     if (updateResult.affectedRows === 0) {
       await db.query(
-        `INSERT INTO ratings (user_id, store_id, rating) VALUES (?, ?, ?)`,
+        `INSERT INTO ratings (user_id, store_id, rating_value) VALUES (?, ?, ?)`,
         [userId, storeId, rating]
       );
     }
@@ -34,7 +34,7 @@ const RatingModel = {
       `SELECT rating_value FROM ratings WHERE user_id = ? AND store_id = ?`,
       [userId, storeId]
     );
-    return rows[0] ? rows[0].rating : null;
+    return rows[0] ? rows[0].rating_value : null;
   },
 };
 

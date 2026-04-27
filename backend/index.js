@@ -1,5 +1,4 @@
 const express = require('express');
-const db =  require("./config/db")
 const cors = require("cors");
 const { userRouter } = require('./routes/user_router');
 const { storeRouter } = require('./routes/store_router');
@@ -14,14 +13,13 @@ const PORT = process.env.PORT;
 app.use(cors({
   origin: "http://localhost:3001",
   methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true, 
+  credentials: true,
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 app.use('/api/user', userRouter);
 app.use('/api/stores', storeRouter);
-app.use('/api/ratings',ratingRouter);
+app.use('/api/ratings', ratingRouter);
 app.use('/api/admin',statRouter);
 
 app.listen(PORT,()=>{

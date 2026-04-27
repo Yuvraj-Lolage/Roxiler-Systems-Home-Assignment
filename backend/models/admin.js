@@ -6,7 +6,7 @@ class AdminStats {
         try {
             const [users] = await db.query("SELECT COUNT(*) AS totalUsers FROM users");
             const [stores] = await db.query("SELECT COUNT(*) AS totalStores FROM stores");
-            const [ratings] = await db.query("SELECT SUM(rating_value) AS totalRatings FROM ratings");
+            const [ratings] = await db.query("SELECT COUNT(*) AS totalRatings FROM ratings");
             return {
                 totalUsers: users[0].totalUsers,
                 totalStores: stores[0].totalStores,

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axiosInstance from "../../API/axios_instance";
-import { Eye, EyeSlash } from "react-bootstrap-icons"; // install react-bootstrap-icons if not already
+import { Eye, EyeSlash, ShieldLock } from "react-bootstrap-icons";
+import { FiZap } from "react-icons/fi";
+import "./change_password.css";
 
 function ChangePassword() {
   const [oldPassword, setOldPassword] = useState("");
@@ -8,6 +10,7 @@ function ChangePassword() {
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
 
   const validatePassword = (password) => {
     const regex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$/;
@@ -18,6 +21,7 @@ function ChangePassword() {
     e.preventDefault();
 
     if (!validatePassword(newPassword)) {
+      setMessageType("error");
       setMessage(
         "Password must be 8–16 characters long, include one uppercase letter and one special character."
       );
@@ -34,79 +38,111 @@ function ChangePassword() {
           },
         }
       );
+      setMessageType("success");
       setMessage(response.data.message);
+      setOldPassword("");
+      setNewPassword("");
     } catch (error) {
+      setMessageType("error");
       setMessage(error.response?.data?.message || "Something went wrong");
     }
   };
 
   return (
-    <div className="container d-flex justify-content-center align-items-center vh-100 bg-light">
-      <div className="card shadow-lg p-4" style={{ maxWidth: "420px", width: "100%" }}>
-        <h3 className="text-center mb-4 text-primary fw-bold">Change Password</h3>
-        <form onSubmit={handleChangePassword}>
-          {/* Old Password */}
-          <div className="mb-3 position-relative">
-            <label htmlFor="oldPassword" className="form-label fw-semibold">
-              Old Password
-            </label>
-            <div className="input-group">
-              <input
-                type={showOld ? "text" : "password"}
-                className="form-control border-0 shadow-sm bg-body-secondary"
-                id="oldPassword"
-                placeholder="Enter old password"
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-                required
-              />
-              <span
-                className="input-group-text bg-body-secondary border-0"
-                style={{ cursor: "pointer" }}
-                onClick={() => setShowOld(!showOld)}
-              >
-                {showOld ? <EyeSlash /> : <Eye />}
-              </span>
+    <div className="password-page">
+      <div className="password-page-orb password-page-orb-one"></div>
+      <div className="password-page-orb password-page-orb-two"></div>
+
+      <div className="password-shell">
+        <section className="password-hero-card">
+          <div className="password-kicker">
+            <FiZap />
+            Security Upgrade
+          </div>
+          <h1>Refresh your credentials with a cleaner, safer access flow.</h1>
+          <p>
+            Use a stronger password to keep your account protected across the
+            platform. Your update is applied instantly after validation.
+          </p>
+
+          <div className="password-tip-card">
+            <ShieldLock />
+            <div>
+              <strong>Password rule</strong>
+              <span>8 to 16 characters, 1 uppercase letter, and 1 special character.</span>
             </div>
           </div>
+        </section>
 
-          {/* New Password */}
-          <div className="mb-3 position-relative">
-            <label htmlFor="newPassword" className="form-label fw-semibold">
-              New Password
-            </label>
-            <div className="input-group">
-              <input
-                type={showNew ? "text" : "password"}
-                className="form-control border-0 shadow-sm bg-body-secondary"
-                id="newPassword"
-                placeholder="Enter new password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-              />
-              <span
-                className="input-group-text bg-body-secondary border-0"
-                style={{ cursor: "pointer" }}
-                onClick={() => setShowNew(!showNew)}
-              >
-                {showNew ? <EyeSlash /> : <Eye />}
-              </span>
+        <section className="password-form-card">
+          <h3>Change Password</h3>
+          <form onSubmit={handleChangePassword} className="password-form">
+            <div className="password-field">
+              <label htmlFor="oldPassword" className="password-label">
+                Old Password
+              </label>
+              <div className="password-input-shell">
+                <input
+                  type={showOld ? "text" : "password"}
+                  className="password-input"
+                  id="oldPassword"
+                  placeholder="Enter old password"
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-visibility-btn"
+                  onClick={() => setShowOld(!showOld)}
+                  aria-label={showOld ? "Hide old password" : "Show old password"}
+                >
+                  {showOld ? <EyeSlash /> : <Eye />}
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="d-grid">
-            <button type="submit" className="btn btn-primary fw-semibold">
+            <div className="password-field">
+              <label htmlFor="newPassword" className="password-label">
+                New Password
+              </label>
+              <div className="password-input-shell">
+                <input
+                  type={showNew ? "text" : "password"}
+                  className="password-input"
+                  id="newPassword"
+                  placeholder="Create new password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-visibility-btn"
+                  onClick={() => setShowNew(!showNew)}
+                  aria-label={showNew ? "Hide new password" : "Show new password"}
+                >
+                  {showNew ? <EyeSlash /> : <Eye />}
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" className="password-submit-btn">
               Update Password
             </button>
-          </div>
-        </form>
+          </form>
 
-        {message && (
-          <div className="alert alert-info text-center mt-3 py-2" role="alert">
-            {message}
-          </div>
-        )}
+          {message && (
+            <div
+              className={`password-message ${
+                messageType === "success" ? "is-success" : "is-error"
+              }`}
+              role="alert"
+            >
+              {message}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );

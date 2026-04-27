@@ -1,6 +1,7 @@
 const AdminStats = require("../models/admin");
 const { User } = require('../models/user');
 const { Store } = require("../models/store");
+const { buildPaginatedResponse, parsePagination } = require("../utils/pagination");
 
 const getAdminStatisticsData = async (req, res) => {
   try {
@@ -16,6 +17,20 @@ const getAdminStatisticsData = async (req, res) => {
 
 const getUsers = async (req, res) => {
   try {
+    const pagination = parsePagination(req.query);
+
+    if (pagination.isPaginatedRequest) {
+      const result = await User.findPaginated(pagination);
+      return res.status(200).json(
+        buildPaginatedResponse({
+          rows: result.rows,
+          total: result.total,
+          page: pagination.page,
+          limit: pagination.limit,
+        })
+      );
+    }
+
     const usersData = await User.findAll();
     res.status(200).json(usersData);
   } catch (error) {
@@ -27,6 +42,20 @@ const getUsers = async (req, res) => {
 
 const getStores = async (req, res) => {
   try {
+    const pagination = parsePagination(req.query);
+
+    if (pagination.isPaginatedRequest) {
+      const result = await Store.findPaginated(pagination);
+      return res.status(200).json(
+        buildPaginatedResponse({
+          rows: result.rows,
+          total: result.total,
+          page: pagination.page,
+          limit: pagination.limit,
+        })
+      );
+    }
+
     const storeData = await Store.findAll();
     res.status(200).json(storeData);
   } catch (error) {
